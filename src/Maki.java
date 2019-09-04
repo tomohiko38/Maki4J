@@ -286,9 +286,14 @@ import java.util.StringTokenizer;
  * Version 1.5.32 2019/07/30 Tue
  * 機能追加
  *   ・文章全体・目次全体のフォント及びサイズの見直し。
+ * -------------------------------------------------------
+ * Version 1.5.33 2019/09/04 Wed
+ * 機能追加
+ *   ・文章全体・目次全体のフォント及びサイズの見直し。
+ *   ・游明朝に設定
  *
  * @author tomohiko37_i
- * @version 1.5.32
+ * @version 1.5.33
  */
 public class Maki {
 
@@ -360,7 +365,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.32";
+    private static final String CONST_VERSION = "1.5.33";
 
     /**
      * タイトル(処理するファイル名).
@@ -616,12 +621,10 @@ public class Maki {
                     "margin-left: -15px; border-top: 15px solid #B92A2C; border-left: 15px solid transparent; " +
                     "border-bottom: 0; content: \"\";}" + CONST_CRLF);
             eli.write("      body {margin-right: auto; margin-left: auto; width: 800px; " +
-                    "background-color: #fedadf; font-family: 'メイリオ', 'Meiryo', " +
+                    "background-color: #fedadf; font-family: '游明朝', 'メイリオ', 'Meiryo', " +
                     "'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
-                    "!important; font-size: 1.0em}" + CONST_CRLF);
-            //eli.write("  a {text-decoration: none; border-bottom: 2px dotted;}");
-            //eli.write("  a {text-decoration: none;}" + CONST_CRLF);
-            eli.write("      .toc {font-size: 0.8em;}" + CONST_CRLF);
+                    "!important; font-size: 1.0em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
+            eli.write("      .toc {font-size: 1.0em;}" + CONST_CRLF);
             eli.write("      .tocHeader {font-size: 1.2em; font-weight: bolder; "
                              + "background: linear-gradient(transparent 50%, yellow 50%);}" + CONST_CRLF);
             eli.write("  </style>" + CONST_CRLF);
@@ -1223,9 +1226,9 @@ public class Maki {
         this.bw.write("  <title>" + this.title + "</title>" + CONST_CRLF);
         this.bw.write("  <style type=\"text/css\">" + CONST_CRLF);
         this.bw.write("      body {margin-right: auto; margin-left: auto; width: 800px; " +
-                "background-color: #fedadf; font-family: 'メイリオ', 'Meiryo', " +
+                "background-color: #fedadf; font-family: '游明朝', 'メイリオ', 'Meiryo', " +
                 "'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
-                "!important; font-size: 1.0em}" + CONST_CRLF);
+                "!important; font-size: 1.1em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
         this.bw.write("      h1 {position: relative; margin: 0 0 1.5em; padding: 0.8em; " +
                 "background: #B92A2C; color: #fff; font-size: 1.143em; font-weight: bold; " +
                 "border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px;}" + CONST_CRLF);
