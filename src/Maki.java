@@ -291,9 +291,13 @@ import java.util.StringTokenizer;
  * 機能追加
  *   ・文章全体・目次全体のフォント及びサイズの見直し。
  *   ・游明朝に設定
+ * -------------------------------------------------------
+ * Version 1.5.34 2019/09/06 Fri
+ * 機能追加
+ *   ・目次のリンクをマウスホバー時に下線が表示されるように修正。
  *
  * @author tomohiko37_i
- * @version 1.5.33
+ * @version 1.5.34
  */
 public class Maki {
 
@@ -365,7 +369,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.33";
+    private static final String CONST_VERSION = "1.5.34";
 
     /**
      * タイトル(処理するファイル名).
@@ -633,6 +637,9 @@ public class Maki {
             eli.write("      .toc {font-size: 1.0em;}" + CONST_CRLF);
             eli.write("      .tocHeader {font-size: 1.2em; font-weight: bolder; "
                              + "background: linear-gradient(transparent 50%, yellow 50%);}" + CONST_CRLF);
+            eli.write("      a { text-decoration: none; }" + CONST_CRLF);
+            eli.write("      a:hover { text-decoration: underline; }");
+
             eli.write("  </style>" + CONST_CRLF);
             eli.write("</head>" + CONST_CRLF);
             eli.write("<body>" + CONST_CRLF);
