@@ -421,7 +421,8 @@ public class Maki {
      */
     public static void main(final String[] args) {
         if (args.length == 4) {
-            rootDir = args[PARAM_NUM_ROOT_DIR];
+            // パラメータ4個なので NOZOMI モード
+            rootDir = args[PARAM_NUM_ROOT_DIR]; // 目次ファイル用
         }
         new Maki(args);
     }
@@ -462,17 +463,18 @@ public class Maki {
         }
 
         // モードを取得する
-        String mode = args[PARAM_NUM_MODE];
+        String mode = args[PARAM_NUM_MODE]; // 0番目
 
         String inputFilePath  = "";  // 読み込むファイルのパス
         String outputFilePath = "";  // 出力ファイルのパス
         if (args.length == 2) {
-            // 入力のパスとして扱う
-            inputFilePath  = args[PARAM_NUM_IN_FILE];
-            outputFilePath = inputFilePath + "." + CONST_VERSION + ".html";
+            // ELI モードの場合のパラメータ受け取り
+            inputFilePath  = args[PARAM_NUM_IN_FILE];  // 1番目
+            outputFilePath = inputFilePath + "." + CONST_VERSION + ".html"; // ※未使用変数
         } else if (args.length == 4) {
-            inputFilePath  = args[PARAM_NUM_IN_FILE];
-            outputFilePath = args[PARAM_NUM_OUT_FILE];
+            // NOZOMI モードの場合のパラメータ受け取り
+            inputFilePath  = args[PARAM_NUM_IN_FILE];   // 1番目
+            outputFilePath = args[PARAM_NUM_OUT_FILE];  // 2番目
         } else {
             // ここに来るのはパラメータの数が多すぎる場合
             return;
@@ -480,8 +482,12 @@ public class Maki {
         // 入力ファイル・出力ファイルのパスから格納するフォルダの
         // パスを取得する(ディレクトリパスの指定の場合はそのまま)
         String inDirPath = this.getDirPath(inputFilePath);
+        // 目次ファイルの場所を指定したくて rootDir を用意している模様
         this.tocFilePath = rootDir + "/index.maki.html";
 
+        // そもそもモードを分けているのが意味わからん。
+        // ELI, NOZOMI の両方のモードを同時に実行すべき
+        // (目次を出力しない場合なんかないので)
         if (MODE_NOZOMI.equals(mode)) {
             // NOZOMI モードの場合
             // 処理の実行
@@ -615,15 +621,15 @@ public class Maki {
             eli.write("  <title>Maki メニュー</title>" + CONST_CRLF);
             eli.write("  <style type=\"text/css\">" + CONST_CRLF);
             eli.write("      h1 {position: relative; margin: 0 0 1.5em; padding: 0.8em; " +
-                    "background: #B92A2C; color: #fff; font-size: 1.143em; font-weight: bold; " +
-                    "border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px;}" + CONST_CRLF);
+                      "          background: #B92A2C; color: #fff; font-size: 1.143em; font-weight: bold; " +
+                      "          border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px;}" + CONST_CRLF);
             eli.write("      h1:after {position: absolute; bottom: -15px; left: 10%; z-index: 90; " +
-                    "margin-left: -15px; border-top: 15px solid #B92A2C; border-left: 15px solid transparent; " +
-                    "border-bottom: 0; content: \"\";}" + CONST_CRLF);
+                      "                margin-left: -15px; border-top: 15px solid #B92A2C; border-left: 15px solid transparent; " +
+                      "                border-bottom: 0; content: \"\";}" + CONST_CRLF);
             eli.write("      body {margin-right: auto; margin-left: auto; width: 800px; " +
-                    "background-color: #fedadf; font-family: '游明朝', 'メイリオ', 'Meiryo', " +
-                    "'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
-                    "!important; font-size: 1.0em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
+                      "            background-color: #fedadf; font-family: '游明朝', 'メイリオ', 'Meiryo', " +
+                      "            'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
+                      "            !important; font-size: 1.0em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
             eli.write("      .toc {font-size: 1.0em;}" + CONST_CRLF);
             eli.write("      .tocHeader {font-size: 1.2em; font-weight: bolder; "
                              + "background: linear-gradient(transparent 50%, yellow 50%);}" + CONST_CRLF);
