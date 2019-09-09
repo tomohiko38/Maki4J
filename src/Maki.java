@@ -295,9 +295,14 @@ import java.util.StringTokenizer;
  * Version 1.5.34 2019/09/06 Fri
  * 機能追加
  *   ・目次のリンクをマウスホバー時に下線が表示されるように修正。
+ * -------------------------------------------------------
+ * Version 1.5.35 2019/09/09 Mon
+ * 機能追加
+ *   ・文章全体のフォントを見直し(結局元に戻した)。
+ *   ・脚注のフォントサイズをやや小さめに。
  *
  * @author tomohiko37_i
- * @version 1.5.34
+ * @version 1.5.35
  */
 public class Maki {
 
@@ -369,7 +374,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.34";
+    private static final String CONST_VERSION = "1.5.35";
 
     /**
      * タイトル(処理するファイル名).
@@ -631,9 +636,9 @@ public class Maki {
                       "                margin-left: -15px; border-top: 15px solid #B92A2C; border-left: 15px solid transparent; " +
                       "                border-bottom: 0; content: \"\";}" + CONST_CRLF);
             eli.write("      body {margin-right: auto; margin-left: auto; width: 800px; " +
-                      "            background-color: #fedadf; font-family: '游明朝', 'メイリオ', 'Meiryo', " +
+                      "            background-color: #fedadf; font-family: 'メイリオ', 'Meiryo', " +
                       "            'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
-                      "            !important; font-size: 1.0em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
+                      "            !important; font-size: 0.8em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
             eli.write("      .toc {font-size: 1.0em;}" + CONST_CRLF);
             eli.write("      .tocHeader {font-size: 1.2em; font-weight: bolder; "
                              + "background: linear-gradient(transparent 50%, yellow 50%);}" + CONST_CRLF);
@@ -1239,9 +1244,9 @@ public class Maki {
         this.bw.write("  <title>" + this.title + "</title>" + CONST_CRLF);
         this.bw.write("  <style type=\"text/css\">" + CONST_CRLF);
         this.bw.write("      body {margin-right: auto; margin-left: auto; width: 800px; " +
-                "background-color: #fedadf; font-family: '游明朝', 'メイリオ', 'Meiryo', " +
+                "background-color: #fedadf; font-family: 'メイリオ', 'Meiryo', " +
                 "'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
-                "!important; font-size: 1.1em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
+                "!important; font-size: 1.0em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
         this.bw.write("      h1 {position: relative; margin: 0 0 1.5em; padding: 0.8em; " +
                 "background: #B92A2C; color: #fff; font-size: 1.143em; font-weight: bold; " +
                 "border-radius: 5px; -webkit-border-radius: 5px; -moz-border-radius: 5px;}" + CONST_CRLF);
@@ -1262,7 +1267,7 @@ public class Maki {
                 "border:1px solid #A8A8A8;border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; overflow: auto;}");
         this.bw.write("      hr {margin-left: 35px; border: none; border-top: dashed 1px #A8A8A8; height: 1px; " +
                 "color: #FFFFFF; margin: 0 6 0 6;}" + CONST_CRLF);
-        this.bw.write("      .footnote {font-size: 0.9em;}" + CONST_CRLF);
+        this.bw.write("      .footnote {font-size: 0.8em;}" + CONST_CRLF);
         this.bw.write("      .supText {font-size: 0.6em; vertical-align: super; " +
                 "position: relative; top: -0.1em; color: #B92A2C}" + CONST_CRLF);
         this.bw.write("      .footer {width: auto; height: 25px; line-height: 25px; " +
