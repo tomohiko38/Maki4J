@@ -300,9 +300,13 @@ import java.util.StringTokenizer;
  * 機能追加
  *   ・文章全体のフォントを見直し(結局元に戻した)。
  *   ・脚注のフォントサイズをやや小さめに。
+ * -------------------------------------------------------
+ * Version 1.5.36 2019/09/10 Tue
+ * 機能追加
+ *   ・取り消し線(%%で囲む)の機能を追加。
  *
  * @author tomohiko37_i
- * @version 1.5.35
+ * @version 1.5.36
  */
 public class Maki {
 
@@ -374,7 +378,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.35";
+    private static final String CONST_VERSION = "1.5.36";
 
     /**
      * タイトル(処理するファイル名).
@@ -1301,8 +1305,9 @@ public class Maki {
         this.bw.write("      .code-box.deco::-webkit-scrollbar { height: 10px; }" + CONST_CRLF);
         this.bw.write("      .code-box.deco::-webkit-scrollbar-track { border-radius: 50px; background: #eee; }" + CONST_CRLF);
         this.bw.write("      .code-box.deco::-webkit-scrollbar-thumb { border-radius: 10px; background: #A8A8A8; }" + CONST_CRLF);
-        this.bw.write("      .marker_yellow_hoso { background: linear-gradient(transparent 60%, #ffff66 60%); font-weight: bold;}");
-        this.bw.write("      .important_sentence { color: red; text-decoration: underline; font-weight: bold;}");
+        this.bw.write("      .marker_yellow_hoso { background: linear-gradient(transparent 60%, #ffff66 60%); font-weight: bold;}" + CONST_CRLF);
+        this.bw.write("      .important_sentence { color: red; text-decoration: underline; font-weight: bold;}" + CONST_CRLF);
+        this.bw.write("      .text_strike {text-decoration: line-through;}" + CONST_CRLF);
 
         this.bw.write("       blockquote { margin-left: 35px; position: relative; padding: 5px 10px 5px 32px; width: 721px; "
                            + "font-style: italic; background: #ffcce5; border-bottom: solid 3px #B92A2C; border-top: solid 1px #B92A2C; }" + CONST_CRLF);
@@ -1513,6 +1518,7 @@ public class Maki {
         work = this.editInline(work, "``", "<code style=\"color: #B92A2C; border: solid 1px #c0c0c0; border-radius: 3px 3px 3px 3px; background-color: #dcdcdc; padding: 2px;\">", "</code>");
         work = this.editInline(work, "##", "<span class=\"marker_yellow_hoso\">", "</span>");
         work = this.editInline(work, "@@", "<span class=\"important_sentence\">", "</span>");
+        work = this.editInline(work, "%%", "<span class=\"text_strike\">", "</span>");
         // 行中の脚注の編集
         work = this.editInlineFootnote(work, mode);
         // リンクの作成
