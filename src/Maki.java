@@ -304,9 +304,14 @@ import java.util.StringTokenizer;
  * Version 1.5.36 2019/09/10 Tue
  * 機能追加
  *   ・取り消し線(%%で囲む)の機能を追加。
+ * -------------------------------------------------------
+ * Version 1.5.37 2019/09/20 Fri
+ * 機能追加
+ *   ・脚注のリンクにマウスカーソルを当てるとツールチップを
+ *     表示するように修正した。
  *
  * @author tomohiko37_i
- * @version 1.5.36
+ * @version 1.5.37
  */
 public class Maki {
 
@@ -378,7 +383,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.36";
+    private static final String CONST_VERSION = "1.5.37";
 
     /**
      * タイトル(処理するファイル名).
@@ -1435,8 +1440,9 @@ public class Maki {
                         }
                     }
 
-                    // 脚注
+                    // 脚注書き出し処理
                     if (mode) {
+                        // 脚注の文章をリストへ保存する
                         if (headingWord.toString().equals("")) {
                             this.footNoteList.add("<span id=\"" + (this.footNoteCount + 1)
                                     + "\"><a href=\"#o"+ (this.footNoteCount + 1)
@@ -1449,15 +1455,20 @@ public class Maki {
                         }
                     }
 
+                    // 脚注リンクの上にマウスカーソルを置いた時のツールチップ表示用の脚注文章
+                    // とりあえずダブルクオーテーションとかを除去する
+                    String tooltip = tmp;
+                    tooltip = tooltip.replace("\"", "");
+
                     if (mode) {
                         // 本文側に参照番号を入れる
                         ret.append(" <span class=\"supText\" id=\"o" + (this.footNoteCount + 1) + "\"><a href=\"#"
-                                + (this.footNoteCount + 1) + "\">*" + (this.footNoteCount + 1) + "</a></span> ");
+                                + (this.footNoteCount + 1) + "\" title=\"" + tooltip + "\">*" + (this.footNoteCount + 1) + "</a></span> ");
                         this.footNoteCount++;
                     } else {
                         // チェック用の編集
                         ret.append(" <span class=\"supText\" id=\"o" + (this.footNoteCount) + "\"><a href=\"#"
-                                + (this.footNoteCount) + "\">*" + (this.footNoteCount) + "</a></span> ");
+                                + (this.footNoteCount) + "\" title=\"" + tooltip + "\">*" + (this.footNoteCount) + "</a></span> ");
                     }
                 }
 
