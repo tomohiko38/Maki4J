@@ -491,6 +491,7 @@ public class Maki {
             outputFilePath = inputFilePath + "." + CONST_VERSION + ".html"; // ※未使用変数
         } else if (args.length == 4) {
             // NOZOMI モードの場合のパラメータ受け取り
+            // MAKI モードの場合もここが動く(モード判定の場合は注意)
             inputFilePath  = args[PARAM_NUM_IN_FILE];   // 1番目
             outputFilePath = args[PARAM_NUM_OUT_FILE];  // 2番目
         } else {
