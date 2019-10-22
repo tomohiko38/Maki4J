@@ -346,11 +346,6 @@ public class Maki {
     private static final int PARAM_NUM_OUT_FILE = 2;
 
     /**
-     * 起動パラメータの順序: ルートディレクトリ.
-     */
-    private static final int PARAM_NUM_ROOT_DIR = 3;
-
-    /**
      * 箇条書きリスト.
      */
     private List<Object> itemList = new ArrayList<Object>();
@@ -428,24 +423,6 @@ public class Maki {
                                                "throws ",  "throw ",  "boolean "};
 
     /**
-     * ルートディレクトリ.
-     */
-    private static String rootDir = "";
-
-    /**
-     * 簡易的な Sphinx ジェネレータ.
-     *
-     * @param args 起動パラメータ
-     */
-    public static void main(final String[] args) {
-        if (args.length == 4) {
-            // パラメータ4個なので NOZOMI モード
-            rootDir = args[PARAM_NUM_ROOT_DIR]; // 目次ファイル用
-        }
-        new Maki(args);
-    }
-
-    /**
      * テーブル生成のための状況.
      *  0: 未作成
      *  1: ヘッダ
@@ -457,6 +434,30 @@ public class Maki {
      * ブロックがコードブロックかどうか.
      */
     private boolean isCodeBlock = true;
+
+    /**
+     * 見出し1のカウント.
+     */
+    private int h1Cnt = 0;
+
+    /**
+     * 見出し2のカウント.
+     */
+    private int h2Cnt = 0;
+
+    /**
+     * 見出し3のカウント.
+     */
+    private int h3Cnt = 0;
+
+    /**
+     * 簡易的な Sphinx ジェネレータ.
+     *
+     * @param args 起動パラメータ
+     */
+    public static void main(final String[] args) {
+        new Maki(args);
+    }
 
     /**
      * コンストラクタ.
@@ -488,7 +489,7 @@ public class Maki {
         if (args.length == 2) {
             // ELI モードの場合のパラメータ受け取り
             inputFilePath  = args[PARAM_NUM_IN_FILE];  // 1番目
-            outputFilePath = inputFilePath + "." + CONST_VERSION + ".html"; // ※未使用変数
+            outputFilePath = inputFilePath;
         } else if (args.length == 4) {
             // NOZOMI モードの場合のパラメータ受け取り
             // MAKI モードの場合もここが動く(モード判定の場合は注意)
@@ -501,8 +502,10 @@ public class Maki {
         // 入力ファイル・出力ファイルのパスから格納するフォルダの
         // パスを取得する(ディレクトリパスの指定の場合はそのまま)
         String inDirPath = this.getDirPath(inputFilePath);
-        // 目次ファイルの場所を指定したくて rootDir を用意している模様
-        this.tocFilePath = rootDir + "/index.maki.html";
+        // tocFilePath は各ページの最上部にある「top」の
+        // クリック時に戻る目次ファイルとして使用している
+        // 目次ファイル出力先にも使用するように修正した
+        this.tocFilePath = outputFilePath + "/index.maki.html";
 
         // そもそもモードを分けているのが意味わからん。
         // ELI, NOZOMI の両方のモードを同時に実行すべき
@@ -579,10 +582,6 @@ public class Maki {
         }
     }
 
-    private int h1Cnt = 0;
-    private int h2Cnt = 0;
-    private int h3Cnt = 0;
-
     /**
      * HTMLのタグをエスケープする処理.
      * @param line 1行の文字列
@@ -631,7 +630,7 @@ public class Maki {
         File inputDirFile = new File(inDirPath);
         try {
             this.eli = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new File(inDirPath + "/index.maki.html")), "utf-8"));
+                    new FileOutputStream(new File(this.tocFilePath)), "utf-8"));
 
             eli.write("<!DOCTYPE html>" + CONST_CRLF);
             eli.write("<html lang=\"ja\">" + CONST_CRLF);
