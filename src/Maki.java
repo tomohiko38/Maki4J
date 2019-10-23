@@ -11,6 +11,7 @@ import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -309,9 +310,14 @@ import java.util.StringTokenizer;
  * 機能追加
  *   ・脚注のリンクにマウスカーソルを当てるとツールチップを
  *     表示するように修正した。
+ * -------------------------------------------------------
+ * Version 1.5.38 2019/10/23 Wed
+ * 機能追加
+ *   ・起動パラメータの見直し(一部)
+ *   ・ログ出力機能の実装
  *
  * @author tomohiko37_i
- * @version 1.5.37
+ * @version 1.5.38
  */
 public class Maki {
 
@@ -346,6 +352,11 @@ public class Maki {
     private static final int PARAM_NUM_OUT_FILE = 2;
 
     /**
+     * 起動パラメータの順序: ルートディレクトリ.
+     */
+    private static final int PARAM_NUM_ROOT_DIR = 2;
+
+    /**
      * 箇条書きリスト.
      */
     private List<Object> itemList = new ArrayList<Object>();
@@ -378,7 +389,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.37";
+    private static final String CONST_VERSION = "1.5.38";
 
     /**
      * タイトル(処理するファイル名).
@@ -451,11 +462,19 @@ public class Maki {
     private int h3Cnt = 0;
 
     /**
+     * ルートディレクトリ.
+     */
+    private static String rootDir = "";
+    /**
      * 簡易的な Sphinx ジェネレータ.
      *
      * @param args 起動パラメータ
      */
     public static void main(final String[] args) {
+        if (args.length == 3) {
+            // パラメータ3個なので NOZOMI モード
+            rootDir = args[PARAM_NUM_ROOT_DIR]; // 目次ファイル用
+        }
         new Maki(args);
     }
 
@@ -474,29 +493,36 @@ public class Maki {
      * @param args 起動パラメータ
      */
     private void execute(final String[] args) {
+        this.log("execute --- START");
 
         if (args.length == 0 || args.length == 1) {
             // パラメータは最低限でもモードと入力ファイルの
             // パスは必要なので、個数が満たない場合はエラー
+            this.log("パラメータの数が不足しています。");
+            this.log("パラメータは「モード」「ファイルパス」の 2 つが必要です。");
             return;
         }
 
         // モードを取得する
         String mode = args[PARAM_NUM_MODE]; // 0番目
+        this.log("Execute Mode: [" + mode + "]");
 
         String inputFilePath  = "";  // 読み込むファイルのパス
         String outputFilePath = "";  // 出力ファイルのパス
         if (args.length == 2) {
             // ELI モードの場合のパラメータ受け取り
+            this.log("number of parameters: 2");
             inputFilePath  = args[PARAM_NUM_IN_FILE];  // 1番目
             outputFilePath = inputFilePath;
-        } else if (args.length == 4) {
+        } else if (args.length == 3) {
             // NOZOMI モードの場合のパラメータ受け取り
             // MAKI モードの場合もここが動く(モード判定の場合は注意)
+            this.log("number of parameters: 3");
             inputFilePath  = args[PARAM_NUM_IN_FILE];   // 1番目
             outputFilePath = args[PARAM_NUM_OUT_FILE];  // 2番目
         } else {
             // ここに来るのはパラメータの数が多すぎる場合
+            this.log("指定されたパラメータの数が多すぎます。");
             return;
         }
         // 入力ファイル・出力ファイルのパスから格納するフォルダの
@@ -505,26 +531,32 @@ public class Maki {
         // tocFilePath は各ページの最上部にある「top」の
         // クリック時に戻る目次ファイルとして使用している
         // 目次ファイル出力先にも使用するように修正した
-        this.tocFilePath = outputFilePath + "/index.maki.html";
+        this.tocFilePath = rootDir + "/index.maki.html";
 
-        // そもそもモードを分けているのが意味わからん。
+        this.log("inputFilePath: [" + inputFilePath    + "]");
+        this.log("outputFilePath:[" + outputFilePath   + "]");
+        this.log("tocFilePath:   [" + this.tocFilePath + "]");
+
         // ELI, NOZOMI の両方のモードを同時に実行すべき
         // (目次を出力しない場合なんかないので)
         if (MODE_NOZOMI.equals(mode)) {
             // NOZOMI モードの場合
+            this.log("NOZOMI MODE... allFileBuild start");
             // 処理の実行
             this.allFileBuild(inDirPath);
             return;
         } else if (MODE_ELI.equals(mode)) {
             // ELI モードの場合
+            this.log("ELI MODE... createIndex start");
             // フォルダ内の全ファイルの見出し1を抽出した
             // index.maki.html を作成する
-
             // 目次の出力
             this.createIndex(inDirPath);
+            this.log("execute --- ELI MODE END");
             return;
         }
 
+        this.log("MAKI MODE... file convert start");
         // 読み込むファイルの準備
         File file = new File(inputFilePath);
         this.title = file.getName();
@@ -574,12 +606,13 @@ public class Maki {
             this.bw.close();
 
         } catch (FileNotFoundException e) {
+            this.log(e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            this.log(e.getMessage());
             e.printStackTrace();
-        } finally {
-
         }
+        this.log("execute --- OTHER MODE END");
     }
 
     /**
@@ -630,7 +663,7 @@ public class Maki {
         File inputDirFile = new File(inDirPath);
         try {
             this.eli = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream(new File(this.tocFilePath)), "utf-8"));
+                    new FileOutputStream(new File(inDirPath + "/index.maki.html")), "utf-8"));
 
             eli.write("<!DOCTYPE html>" + CONST_CRLF);
             eli.write("<html lang=\"ja\">" + CONST_CRLF);
@@ -667,16 +700,20 @@ public class Maki {
             eli.write("</html>" + CONST_CRLF);
 
         } catch (UnsupportedEncodingException e2) {
+            this.log(e2.getMessage());
             e2.printStackTrace();
         } catch (FileNotFoundException e2) {
+            this.log(e2.getMessage());
             e2.printStackTrace();
         } catch (IOException e1) {
+            this.log(e1.getMessage());
             e1.printStackTrace();
         } finally {
             try {
                 this.eli.flush();
                 this.eli.close();
             } catch (IOException e) {
+                this.log(e.getMessage());
                 e.printStackTrace();
             }
         }
@@ -734,8 +771,10 @@ public class Maki {
                 }
             }
         } catch (FileNotFoundException e) {
+            this.log(e.getMessage());
             e.printStackTrace();
         } catch (IOException e) {
+            this.log(e.getMessage());
             e.printStackTrace();
         }
     }
@@ -756,8 +795,7 @@ public class Maki {
                 String outputFilePath = dir.getParent() + File.separator + dir.getName().replace(".maki", ".html");
                 String[] args = {MODE_MAKI,
                                  dir.getPath(),
-                                 outputFilePath,
-                                 ""};
+                                 outputFilePath};
                 new Maki(args);
             }
         }
@@ -1680,5 +1718,16 @@ public class Maki {
             this.bw.write("  </ul>" + CONST_CRLF);
         }
         this.bw.write("</ul>" + CONST_CRLF);
+    }
+
+    /**
+     * プログラム実行時のログを出力(標準出力).
+     * @param msg ログに出す文字.
+     */
+    private void log(final String msg) {
+        Calendar cal = Calendar.getInstance();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss,SSS");
+        String dateMsg = sdf.format(cal.getTime());
+        System.out.println(dateMsg + " - " + msg);
     }
 }
