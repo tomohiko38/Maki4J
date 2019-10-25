@@ -320,6 +320,7 @@ import java.util.StringTokenizer;
  * 機能追加
  *   ・ログ出力を定数値により出力制御が可能とした。
  *   ・ボックスリンクの初版を作成(.. link::)。
+ *   ・ボックスリンク用のアノテーションを追加。
  *
  * @author tomohiko37_i
  * @version 1.5.39
@@ -894,6 +895,9 @@ public class Maki {
             this.bw.write("<h3 " + "id=\"h3_" + h3Cnt + "\">" + this.tempStr + "</h3>" + CONST_CRLF);
             h3Cnt++;
 
+        } else if ("@".equals(token)) {
+            // アノテーションの場合
+            // 将来的な機能拡張で使用する
         } else if ("*".equals(token)) {
 
             this.blockWrite();
@@ -966,27 +970,27 @@ public class Maki {
                 // リンク先のファイルを読み込み
                 BufferedReader tmpBr =  new BufferedReader(new InputStreamReader(
                                             new FileInputStream(new File(rootDir + link)), "utf-8"));
-                // 1行だけ読む
-                String linkTitle = "";
-                String outline = "";
-                int tmpCnt = 0;
+
+                // リンク先のアノテーションを取得する
+                // ※インスタンス変数の pageTitle, pageOutline は当該ページのもの
+                String linkTitle = "Linked page annotation(@page_title) is not set.";
+                String outline = "Linked page annotation(@page_outline) is not set.";
+
                 while (tmpBr.ready()) {
                     String tmpLine = tmpBr.readLine();
-                    if (tmpCnt == 0) {
-                        linkTitle = tmpLine;
-                    } else {
-                        if (tmpLine.indexOf(".. note::") != -1) {
-                            outline = tmpLine.substring(10);
-                        }
+                    if (tmpLine.indexOf("@page_title") != -1) {
+                        linkTitle = tmpLine.split(":")[1];
+                    } else if (tmpLine.indexOf("@page_outline") != -1) {
+                        outline = tmpLine.split(":")[1];
                     }
-                    tmpCnt++;
                 }
 
                 this.bw.write("<div class=\"inner-link-box\">" + CONST_CRLF);
-                this.bw.write("  <span class=\"link-badge\">Inner Link</span><a href=\"" + rootDir + link.replace(".maki", ".html") +  "\" target=\"_blank\"><b>" + linkTitle + "</b></a><br>" + CONST_CRLF);
+                this.bw.write("  <span class=\"link-badge\">Inner Link</span><a href=\""
+                                    + rootDir + link.replace(".maki", ".html")
+                                    +  "\" target=\"_blank\"><b>" + linkTitle + "</b></a><br>" + CONST_CRLF);
                 this.bw.write("  <div class=\"inner-link-outline\">" + outline + "</div>");
                 this.bw.write("</div>");
-
 
                 tmpBr.close();
             }
@@ -1031,10 +1035,6 @@ public class Maki {
                 this.blockList.add(orgLine);
                 // (廃止→)オリジナル行を使用したときに、オリジナル行に
                 // (廃止→)脚注要素があればリストから削除しておく
-//            	if (orgLine.indexOf("$") != -1) {
-//            		this.footNoteList.remove(this.footNoteList.size() - 1);
-//            		this.footNoteCount--;
-//            	}
             } else {
                 // 先頭が空白の場合はレベル2以降の箇条書き
                 if (line.indexOf("    * ") != -1) {
