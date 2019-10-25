@@ -315,9 +315,14 @@ import java.util.StringTokenizer;
  * 機能追加
  *   ・起動パラメータの見直し(一部)
  *   ・ログ出力機能の実装
+ * -------------------------------------------------------
+ * Version 1.5.39 2019/10/25 Fri
+ * 機能追加
+ *   ・ログ出力を定数値により出力制御が可能とした。
+ *   ・ボックスリンクの初版を作成(.. link::)。
  *
  * @author tomohiko37_i
- * @version 1.5.38
+ * @version 1.5.39
  */
 public class Maki {
 
@@ -389,7 +394,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.38";
+    private static final String CONST_VERSION = "1.5.39";
 
     /**
      * タイトル(処理するファイル名).
@@ -465,6 +470,18 @@ public class Maki {
      * ルートディレクトリ.
      */
     private static String rootDir = "";
+
+    /**
+     * 定数:ログ出力:OFF.
+     */
+    private static String LOG_LEVEL_OFF = "off";
+
+    /**
+     * ログ出力制御の定数.
+     * ログを出力したいときはここを on にすること.
+     */
+    private static String LOG_OUTPUT = "off";
+
     /**
      * 簡易的な Sphinx ジェネレータ.
      *
@@ -940,6 +957,40 @@ public class Maki {
                 this.bw.write("</div>" + CONST_CRLF);
             }
 
+            // .. link:: かどうか
+            if (line.indexOf("link::") != -1) {
+
+                // リンク先ファイルの相対パスを取得
+                String link = line.substring(10);
+
+                // リンク先のファイルを読み込み
+                BufferedReader tmpBr =  new BufferedReader(new InputStreamReader(
+                                            new FileInputStream(new File(rootDir + link)), "utf-8"));
+                // 1行だけ読む
+                String linkTitle = "";
+                String outline = "";
+                int tmpCnt = 0;
+                while (tmpBr.ready()) {
+                    String tmpLine = tmpBr.readLine();
+                    if (tmpCnt == 0) {
+                        linkTitle = tmpLine;
+                    } else {
+                        if (tmpLine.indexOf(".. note::") != -1) {
+                            outline = tmpLine.substring(10);
+                        }
+                    }
+                    tmpCnt++;
+                }
+
+                this.bw.write("<div class=\"inner-link-box\">" + CONST_CRLF);
+                this.bw.write("  <span class=\"link-badge\">Inner Link</span><a href=\"" + rootDir + link.replace(".maki", ".html") +  "\" target=\"_blank\"><b>" + linkTitle + "</b></a><br>" + CONST_CRLF);
+                this.bw.write("  <div class=\"inner-link-outline\">" + outline + "</div>");
+                this.bw.write("</div>");
+
+
+                tmpBr.close();
+            }
+
         } else if ("+".equals(token)) {
 
             this.itemListWrite();
@@ -1312,6 +1363,12 @@ public class Maki {
                 "font-size: 14px; line-height: 1.4;}");
         this.bw.write("      .code-box {margin-left: 35px; background-color: #eee; padding: 0.8em; " +
                 "border:1px solid #A8A8A8;border-radius: 6px; -webkit-border-radius: 6px; -moz-border-radius: 6px; overflow: auto;}");
+
+
+        this.bw.write("      .inner-link-box {margin-left: 35px; background-color: #eee; padding: 0.8em; border:1px solid #A8A8A8;}");
+        this.bw.write("      .inner-link-outline {margin-left: 85px; font-size: 0.7em;}");
+
+
         this.bw.write("      hr {margin-left: 35px; border: none; border-top: dashed 1px #A8A8A8; height: 1px; " +
                 "color: #FFFFFF; margin: 0 6 0 6;}" + CONST_CRLF);
         this.bw.write("      .footnote {font-size: 0.8em;}" + CONST_CRLF);
@@ -1343,6 +1400,7 @@ public class Maki {
         this.bw.write("      .box27 p { margin: 0; padding: 0;}" + CONST_CRLF);
         this.bw.write("      .sankou-badge, .link-badge { padding: 1px 6px; margin-right: 8px; margin-left: 1px; font-size: 70%; color: white; "
                            + "border-radius: 2px; box-shadow: 0 0 3px #ddd; white-space: nowrap; }" + CONST_CRLF);
+
         this.bw.write("      .link-badge { background-color: #58ACFA; }");
         this.bw.write("      .sankou-badge { background-color: #B92A2C; }");
         this.bw.write("      .code-box.deco::-webkit-scrollbar { height: 10px; }" + CONST_CRLF);
@@ -1725,6 +1783,11 @@ public class Maki {
      * @param msg ログに出す文字.
      */
     private void log(final String msg) {
+
+        if (LOG_OUTPUT.equals(LOG_LEVEL_OFF)) {
+            return;
+        }
+
         Calendar cal = Calendar.getInstance();
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss,SSS");
         String dateMsg = sdf.format(cal.getTime());
