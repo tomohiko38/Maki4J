@@ -321,9 +321,13 @@ import java.util.StringTokenizer;
  *   ・ログ出力を定数値により出力制御が可能とした。
  *   ・ボックスリンクの初版を作成(.. link::)。
  *   ・ボックスリンク用のアノテーションを追加。
+ * -------------------------------------------------------
+ * Version 1.5.40 2019/10/28 Mon
+ * 機能追加
+ *   ・画像の横幅を指定できるように機能追加。
  *
  * @author tomohiko37_i
- * @version 1.5.39
+ * @version 1.5.40
  */
 public class Maki {
 
@@ -395,7 +399,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.39";
+    private static final String CONST_VERSION = "1.5.40";
 
     /**
      * タイトル(処理するファイル名).
@@ -942,8 +946,19 @@ public class Maki {
 
                 // 画像ファイル(パス)名を取得する
                 String imagePath = line.substring(11);
+                String width = "";
 
-                this.bw.write("<a href=\"" + imagePath + "\"><img src=\"" + imagePath + "\"/></a>");
+                if (imagePath.indexOf(",") != -1) {
+                    String[] tokens = imagePath.split(",");
+                    imagePath = tokens[0];
+                    width = tokens[1].trim();
+                }
+
+                if (!width.equals("")) {
+                    this.bw.write("<a href=\"" + imagePath + "\"><img src=\"" + imagePath + "\" width=\"" + width + "\"/></a>");
+                } else {
+                    this.bw.write("<a href=\"" + imagePath + "\"><img src=\"" + imagePath + "\"/></a>");
+                }
             }
 
             // .. note:: かどうか
