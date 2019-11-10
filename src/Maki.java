@@ -325,9 +325,13 @@ import java.util.StringTokenizer;
  * Version 1.5.40 2019/10/28 Mon
  * 機能追加
  *   ・画像の横幅を指定できるように機能追加。
+ * -------------------------------------------------------
+ * Version 1.5.41 2019/11/11 Mon
+ * 機能追加
+ *   ・Inner Link の表示内容を少々変更。
  *
  * @author tomohiko37_i
- * @version 1.5.40
+ * @version 1.5.41
  */
 public class Maki {
 
@@ -399,7 +403,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.40";
+    private static final String CONST_VERSION = "1.5.41";
 
     /**
      * タイトル(処理するファイル名).
@@ -1001,11 +1005,13 @@ public class Maki {
                 }
 
                 this.bw.write("<div class=\"inner-link-box\">" + CONST_CRLF);
+                this.bw.write("  <span style=\"font-weight: bold; font-size: 0.8em;\">blog.tmp.maki</span><br>" + CONST_CRLF);
                 this.bw.write("  <span class=\"link-badge\">Inner Link</span><a href=\""
                                     + rootDir + link.replace(".maki", ".html")
                                     +  "\" target=\"_blank\"><b>" + linkTitle + "</b></a><br>" + CONST_CRLF);
-                this.bw.write("  <div class=\"inner-link-outline\">" + outline + "</div>");
-                this.bw.write("</div>");
+                this.bw.write("  <div class=\"inner-link-outline\">" + outline + "</div>" + CONST_CRLF);
+                this.bw.write("  <span style=\"font-weight: bold; font-size: 0.6em; text-align: right;\">■created by @tomohiko37_i </span>" + CONST_CRLF);
+                this.bw.write("</div>" + CONST_CRLF);
 
                 tmpBr.close();
             }
