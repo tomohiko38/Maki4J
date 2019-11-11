@@ -329,6 +329,7 @@ import java.util.StringTokenizer;
  * Version 1.5.41 2019/11/11 Mon
  * 機能追加
  *   ・Inner Link の表示内容を少々変更。
+ *   ・太字 + underline の文字装飾(&&)を追加。
  *
  * @author tomohiko37_i
  * @version 1.5.41
@@ -1429,6 +1430,7 @@ public class Maki {
         this.bw.write("      .code-box.deco::-webkit-scrollbar-thumb { border-radius: 10px; background: #A8A8A8; }" + CONST_CRLF);
         this.bw.write("      .marker_yellow_hoso { background: linear-gradient(transparent 60%, #ffff66 60%); font-weight: bold;}" + CONST_CRLF);
         this.bw.write("      .important_sentence { color: red; text-decoration: underline; font-weight: bold;}" + CONST_CRLF);
+        this.bw.write("      .bold_sentence { text-decoration: underline; font-weight: bold;}" + CONST_CRLF);
         this.bw.write("      .text_strike {text-decoration: line-through;}" + CONST_CRLF);
 
         this.bw.write("       blockquote { margin-left: 35px; position: relative; padding: 5px 10px 5px 32px; width: 721px; "
@@ -1646,6 +1648,7 @@ public class Maki {
         work = this.editInline(work, "``", "<code style=\"color: #B92A2C; border: solid 1px #c0c0c0; border-radius: 3px 3px 3px 3px; background-color: #dcdcdc; padding: 2px;\">", "</code>");
         work = this.editInline(work, "##", "<span class=\"marker_yellow_hoso\">", "</span>");
         work = this.editInline(work, "@@", "<span class=\"important_sentence\">", "</span>");
+        work = this.editInline(work, "&&", "<span class=\"bold_sentence\">", "</span>");
         work = this.editInline(work, "%%", "<span class=\"text_strike\">", "</span>");
         // 行中の脚注の編集
         work = this.editInlineFootnote(work, mode);
