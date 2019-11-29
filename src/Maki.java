@@ -334,9 +334,13 @@ import java.util.StringTokenizer;
  * Version 1.5.42 2019/11/27 Wed
  * 機能追加
  *   ・画面最下部に文字装飾のヘルプを表示.
+ * -------------------------------------------------------
+ * Version 1.5.43 2019/11/29 Fri
+ * 機能追加
+ *   ・文字装飾(~~)にて強調・大型もじをサポート.
  *
  * @author tomohiko37_i
- * @version 1.5.42
+ * @version 1.5.43
  */
 public class Maki {
 
@@ -408,7 +412,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.42";
+    private static final String CONST_VERSION = "1.5.43";
 
     /**
      * タイトル(処理するファイル名).
@@ -1436,6 +1440,7 @@ public class Maki {
         this.bw.write("      .important_sentence { color: red; text-decoration: underline; font-weight: bold;}" + CONST_CRLF);
         this.bw.write("      .bold_sentence { text-decoration: underline; font-weight: bold;}" + CONST_CRLF);
         this.bw.write("      .text_strike {text-decoration: line-through;}" + CONST_CRLF);
+        this.bw.write("      .strong_impact { background: linear-gradient(transparent 80%, #ffff66 80%); font-weight: bold; font-size: 2.5em}" + CONST_CRLF);
 
         this.bw.write("       blockquote { margin-left: 35px; position: relative; padding: 5px 10px 5px 32px; width: 721px; "
                            + "font-style: italic; background: #ffcce5; border-bottom: solid 3px #B92A2C; border-top: solid 1px #B92A2C; }" + CONST_CRLF);
@@ -1471,7 +1476,9 @@ public class Maki {
         this.bw.write("<div class=\"help\"><code>[``]: code</code>&nbsp;&nbsp;&nbsp;"
                 + "<code>[##]: ym + u</code>&nbsp;&nbsp;&nbsp;"
                 + "<code>[@@]: r + b + u</code>&nbsp;&nbsp;&nbsp;<code>"
-                + "[&&]: b + u</code>&nbsp;&nbsp;&nbsp;<code>[%%]: strike</code></div>");
+                + "[&&]: b + u</code>&nbsp;&nbsp;&nbsp;<code>"
+                + "[%%]: strike</code>&nbsp;&nbsp;&nbsp;<code>"
+                + "[~~]: strong big</code></div>");
         this.bw.write("</body>" + CONST_CRLF);
         this.bw.write("</html>" + CONST_CRLF);
     }
@@ -1659,6 +1666,7 @@ public class Maki {
         work = this.editInline(work, "@@", "<span class=\"important_sentence\">", "</span>");
         work = this.editInline(work, "&&", "<span class=\"bold_sentence\">", "</span>");
         work = this.editInline(work, "%%", "<span class=\"text_strike\">", "</span>");
+        work = this.editInline(work, "~~", "<span class=\"strong_impact\">", "</span>");
         // 行中の脚注の編集
         work = this.editInlineFootnote(work, mode);
         // リンクの作成
