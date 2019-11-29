@@ -1478,7 +1478,7 @@ public class Maki {
                 + "<code>[@@]: r + b + u</code>&nbsp;&nbsp;&nbsp;<code>"
                 + "[&&]: b + u</code>&nbsp;&nbsp;&nbsp;<code>"
                 + "[%%]: strike</code>&nbsp;&nbsp;&nbsp;<code>"
-                + "[~~]: strong big</code></div>");
+                + "[__]: strong big</code></div>");
         this.bw.write("</body>" + CONST_CRLF);
         this.bw.write("</html>" + CONST_CRLF);
     }
