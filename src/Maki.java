@@ -337,7 +337,7 @@ import java.util.StringTokenizer;
  * -------------------------------------------------------
  * Version 1.5.43 2019/11/29 Fri
  * 機能追加
- *   ・文字装飾(~~)にて強調・大型もじをサポート.
+ *   ・文字装飾(__)にて強調・大型もじをサポート.
  *
  * @author tomohiko37_i
  * @version 1.5.43
@@ -1666,7 +1666,7 @@ public class Maki {
         work = this.editInline(work, "@@", "<span class=\"important_sentence\">", "</span>");
         work = this.editInline(work, "&&", "<span class=\"bold_sentence\">", "</span>");
         work = this.editInline(work, "%%", "<span class=\"text_strike\">", "</span>");
-        work = this.editInline(work, "~~", "<span class=\"strong_impact\">", "</span>");
+        work = this.editInline(work, "__", "<span class=\"strong_impact\">", "</span>");
         // 行中の脚注の編集
         work = this.editInlineFootnote(work, mode);
         // リンクの作成
