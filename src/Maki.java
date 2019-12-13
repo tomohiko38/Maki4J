@@ -338,9 +338,13 @@ import java.util.StringTokenizer;
  * Version 1.5.43 2019/11/29 Fri
  * 機能追加
  *   ・文字装飾(__)にて強調・大型もじをサポート.
+ * -------------------------------------------------------
+ * Version 1.5.44 2019/12/13 Fri
+ * 機能追加
+ *   ・コードハイライト(仮)の予約後追加
  *
  * @author tomohiko37_i
- * @version 1.5.43
+ * @version 1.5.44
  */
 public class Maki {
 
@@ -412,7 +416,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.43";
+    private static final String CONST_VERSION = "1.5.44";
 
     /**
      * タイトル(処理するファイル名).
@@ -448,13 +452,14 @@ public class Maki {
     /**
      * シンタックスハイライトの対象(Java).
      */
-    private String[] syntaxHighlighting4J = {"public ", "private ", "protected ",  "void ",   "return",
+    private String[] syntaxHighlighting4J = {  "@param",  "@return", "@author",    "@version", "public ",
+                                               "private ", "protected ",  "void ",   "return",
                                                "final ",  "this",    "super",      "if ",     "else ",
                                                "for ",    "while ",   "switch ",     "try ",    "catch ",
                                                "new ",    "finally ", "null",       "static ", "class ",
                                                "true",   "false",   "instanceof ", "int ",    "double ",
                                                "float",  "short",   "long",       "break",  "continue",
-                                               "throws ",  "throw ",  "boolean "};
+                                               "throws ",  "throw ",  "boolean ", "package", "import"};
 
     /**
      * テーブル生成のための状況.
