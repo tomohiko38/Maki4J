@@ -342,9 +342,14 @@ import java.util.StringTokenizer;
  * Version 1.5.44 2019/12/13 Fri
  * 機能追加
  *   ・コードハイライト(仮)の予約後追加
+ * -------------------------------------------------------
+ * Version 1.5.45 2019/12/19 Thurs
+ * 機能追加
+ *   ・画像の右寄せ・左寄せ・中央寄せを可能にした。
+ *     (右・左寄せの場合はテキストが回り込む設定にした)
  *
  * @author tomohiko37_i
- * @version 1.5.44
+ * @version 1.5.45
  */
 public class Maki {
 
@@ -416,7 +421,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.44";
+    private static final String CONST_VERSION = "1.5.45";
 
     /**
      * タイトル(処理するファイル名).
@@ -965,17 +970,38 @@ public class Maki {
                 // 画像ファイル(パス)名を取得する
                 String imagePath = line.substring(11);
                 String width = "";
+                String align = "";
 
                 if (imagePath.indexOf(",") != -1) {
                     String[] tokens = imagePath.split(",");
                     imagePath = tokens[0];
                     width = tokens[1].trim();
+
+                    if (tokens.length == 3) {
+                        align = tokens[2].trim();
+                    }
                 }
 
-                if (!width.equals("")) {
-                    this.bw.write("<a href=\"" + imagePath + "\"><img src=\"" + imagePath + "\" width=\"" + width + "\"/></a>");
+                if (!align.equals("")) {
+
+                    if ("center".equals(align)) {
+                        this.bw.write("<div style=\"text-align:center\">" + CONST_CRLF);
+                    } else {
+                        this.bw.write("<div style=\"float:" + align + ";margin-right:10px;margin-bottom:10px\">" + CONST_CRLF);
+                    }
+
+                    if (!width.equals("")) {
+                        this.bw.write("<a href=\"" + imagePath + "\"><img src=\"" + imagePath + "\" width=\"" + width + "\"/></a>");
+                    } else {
+                        this.bw.write("<a href=\"" + imagePath + "\"><img src=\"" + imagePath + "\"/></a>");
+                    }
+                    this.bw.write("</div>" + CONST_CRLF);
                 } else {
-                    this.bw.write("<a href=\"" + imagePath + "\"><img src=\"" + imagePath + "\"/></a>");
+                    if (!width.equals("")) {
+                        this.bw.write("<a href=\"" + imagePath + "\"><img src=\"" + imagePath + "\" width=\"" + width + "\"/></a>");
+                    } else {
+                        this.bw.write("<a href=\"" + imagePath + "\"><img src=\"" + imagePath + "\"/></a>");
+                    }
                 }
             }
 
@@ -1417,7 +1443,7 @@ public class Maki {
                 " color: #fff; background: #B92A2C;}" + CONST_CRLF);
         this.bw.write("      table.type01 td {padding: 10px; font-weight: normal; vertical-align: top;" +
                 " border-bottom: 1px solid #ccc; background: #eee;}" + CONST_CRLF);
-        this.bw.write("      img {margin-left: 35px; max-width: 95%; border: 1px #B92A2C solid; }" + CONST_CRLF);
+        this.bw.write("      img {margin-left: 35px; max-width: 95%; border: 1px #B92A2C solid;}" + CONST_CRLF);
         this.bw.write("      .footnote_title {margin-left: 35px; font-weight: bold;}" + CONST_CRLF);
         this.bw.write("      .heading_lv1 {margin-left: 15px;}" + CONST_CRLF);
         this.bw.write("      .heading_lv2 {margin-left: 15px;}" + CONST_CRLF);
