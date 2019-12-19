@@ -990,7 +990,7 @@ public class Maki {
                         if ("right".equals(align)) {
                             this.bw.write("<div style=\"float:right;margin-left:10px;margin-bottom:10px\">" + CONST_CRLF);
                         } else if ("left".equals(align)) {
-                            this.bw.write("<div style=\"float:left;margin-right:10px;margin-bottom:10px\">" + CONST_CRLF);
+                            this.bw.write("<div style=\"float:left;margin-right:20px;margin-bottom:10px\">" + CONST_CRLF);
                         } else {
                             this.bw.write("<div style=\"text-align:left\">" + CONST_CRLF);
                         }
