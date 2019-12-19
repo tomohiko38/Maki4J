@@ -987,7 +987,13 @@ public class Maki {
                     if ("center".equals(align)) {
                         this.bw.write("<div style=\"text-align:center\">" + CONST_CRLF);
                     } else {
-                        this.bw.write("<div style=\"float:" + align + ";margin-right:10px;margin-bottom:10px\">" + CONST_CRLF);
+                        if ("right".equals(align)) {
+                            this.bw.write("<div style=\"float:right;margin-left:10px;margin-bottom:10px\">" + CONST_CRLF);
+                        } else if ("left".equals(align)) {
+                            this.bw.write("<div style=\"float:left;margin-right:10px;margin-bottom:10px\">" + CONST_CRLF);
+                        } else {
+                            this.bw.write("<div style=\"text-align:left\">" + CONST_CRLF);
+                        }
                     }
 
                     if (!width.equals("")) {
