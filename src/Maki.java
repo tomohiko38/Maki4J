@@ -977,6 +977,7 @@ public class Maki {
                     imagePath = tokens[0];
                     width = tokens[1].trim();
 
+                    // right or left or center までの設定
                     if (tokens.length == 3) {
                         align = tokens[2].trim();
                     }
