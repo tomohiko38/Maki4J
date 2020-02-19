@@ -351,9 +351,13 @@ import java.util.StringTokenizer;
  * Version 1.5.46 2020/01/09 Thurs
  * 機能追加
  *   ・画像の右寄せ時の左側に来るテキストとの余白を微調整。
+ * -------------------------------------------------------
+ * Version 1.5.47 2020/02/20 Thurs
+ * 機能追加
+ *   ・link のパス指定が macOS だとエラーになる問題を修正
  *
  * @author tomohiko37_i
- * @version 1.5.46
+ * @version 1.5.47
  */
 public class Maki {
 
@@ -425,7 +429,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.46";
+    private static final String CONST_VERSION = "1.5.47";
 
     /**
      * タイトル(処理するファイル名).
@@ -512,7 +516,7 @@ public class Maki {
      * ログ出力制御の定数.
      * ログを出力したいときはここを on にすること.
      */
-    private static String LOG_OUTPUT = "off";
+    private static String LOG_OUTPUT = "on";
 
     /**
      * 簡易的な Sphinx ジェネレータ.
@@ -609,6 +613,7 @@ public class Maki {
         // 読み込むファイルの準備
         File file = new File(inputFilePath);
         this.title = file.getName();
+        this.log("★" + file.getName());
         try (BufferedReader br = new BufferedReader(new InputStreamReader(
                 new FileInputStream(file), "utf-8"));) {
 
@@ -1038,6 +1043,10 @@ public class Maki {
 
                 // リンク先ファイルの相対パスを取得
                 String link = line.substring(10);
+                if (".".equals(link.substring(0, 1))) {
+                    // 先頭が . の場合は除去する
+                    link = link.substring(1);
+                }
 
                 // リンク先のファイルを読み込み
                 BufferedReader tmpBr =  new BufferedReader(new InputStreamReader(
@@ -1875,7 +1884,7 @@ public class Maki {
         }
 
         Calendar cal = Calendar.getInstance();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss,SSS");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss,SSS");
         String dateMsg = sdf.format(cal.getTime());
         System.out.println(dateMsg + " - " + msg);
     }
