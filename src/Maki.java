@@ -516,7 +516,7 @@ public class Maki {
      * ログ出力制御の定数.
      * ログを出力したいときはここを on にすること.
      */
-    private static String LOG_OUTPUT = "on";
+    private static String LOG_OUTPUT = "off";
 
     /**
      * 簡易的な Sphinx ジェネレータ.
