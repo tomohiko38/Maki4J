@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -14,7 +15,10 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.StringTokenizer;
 
 
@@ -516,7 +520,19 @@ public class Maki {
      * ログ出力制御の定数.
      * ログを出力したいときはここを on にすること.
      */
-    private static String LOG_OUTPUT = "off";
+    private static String LOG_OUTPUT = "on";
+
+    /**
+     * 各ページに書かれたカテゴリを保持するマップ。
+     * クラス変数にしている点に注意。
+     */
+    private static Map<String, List<String>> categoryMap = new HashMap<>();
+
+    /**
+     * 読み込むファイルのパス.
+     * カテゴリ機能の追加によりインスタンス変数に格上げ.
+     */
+    private String inputFilePath  = "";
 
     /**
      * 簡易的な Sphinx ジェネレータ.
@@ -529,6 +545,34 @@ public class Maki {
             rootDir = args[PARAM_NUM_ROOT_DIR]; // 目次ファイル用
         }
         new Maki(args);
+
+        // 最後にここへ来るため、
+        // ここでカテゴリ・マップを
+        // ファイルに出力しておく
+        try (FileWriter fw = new FileWriter(new File(rootDir + "/tmp_category.txt"));
+        	 BufferedWriter bw = new BufferedWriter(fw);) {
+
+        	Iterator<String> iter = categoryMap.keySet().iterator();
+        	while (iter.hasNext()) {
+        		StringBuilder sb = new StringBuilder();
+        		String key = iter.next();
+        		sb.append(key);
+        		sb.append(":");
+        		List<String> paths = categoryMap.get(key);
+        		int cnt = 0;
+        		for (String path : paths) {
+        			sb.append(path);
+        			if (cnt != (paths.size() - 1)) {
+        				sb.append(",");
+        			}
+        		}
+        		bw.write(sb.toString() + "\n");
+        	}
+
+        	bw.flush();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 
     /**
@@ -560,7 +604,6 @@ public class Maki {
         String mode = args[PARAM_NUM_MODE]; // 0番目
         this.log("Execute Mode: [" + mode + "]");
 
-        String inputFilePath  = "";  // 読み込むファイルのパス
         String outputFilePath = "";  // 出力ファイルのパス
         if (args.length == 2) {
             // ELI モードの場合のパラメータ受け取り
@@ -933,7 +976,31 @@ public class Maki {
 
         } else if ("@".equals(token)) {
             // アノテーションの場合
-            // 将来的な機能拡張で使用する
+
+        	if (line.indexOf("@category:") != -1) {
+        		// 「カテゴリ」アノテーションの場合
+        		// カンマ(,)区切りでカテゴリが書かれている場合は、
+        		// それぞれ分断して全部 Map に保存しておく。
+        		String[] categories = line.substring(10).split(",");
+        		for (String category : categories) {
+        			category = category.trim();
+            		this.log("●category: " + category);
+
+            		List<String> categoryList = null;
+            		if (categoryMap.containsKey(category)) {
+            			// すでにカテゴリが登録されている場合
+            			this.log("●すでにカテゴリが登録されている場合");
+            			categoryList = categoryMap.get(category);
+            		} else {
+            			// カテゴリが存在しない場合
+            			this.log("●カテゴリが存在しない場合");
+            			categoryList = new ArrayList<>();
+            		}
+        			categoryList.add(this.inputFilePath);
+        			categoryMap.put(category, categoryList);
+        		}
+        	}
+
         } else if ("*".equals(token)) {
 
             this.blockWrite();
