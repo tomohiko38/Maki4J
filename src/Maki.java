@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -359,9 +360,14 @@ import java.util.StringTokenizer;
  * Version 1.5.47 2020/02/20 Thurs
  * 機能追加
  *   ・link のパス指定が macOS だとエラーになる問題を修正
+ * -------------------------------------------------------
+ * Version 1.6.0 2020/03/22 Sunday
+ * 機能追加
+ *   ・@category のアノテーションを追加。目次にカテゴリ
+ *     リストを表示するように機能追加した。
  *
  * @author tomohiko37_i
- * @version 1.5.47
+ * @version 1.6.0
  */
 public class Maki {
 
@@ -433,7 +439,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.5.47";
+    private static final String CONST_VERSION = "1.6.0";
 
     /**
      * タイトル(処理するファイル名).
@@ -520,7 +526,7 @@ public class Maki {
      * ログ出力制御の定数.
      * ログを出力したいときはここを on にすること.
      */
-    private static String LOG_OUTPUT = "on";
+    private static String LOG_OUTPUT = "off";
 
     /**
      * 各ページに書かれたカテゴリを保持するマップ。
@@ -549,30 +555,32 @@ public class Maki {
         // 最後にここへ来るため、
         // ここでカテゴリ・マップを
         // ファイルに出力しておく
-        try (FileWriter fw = new FileWriter(new File(rootDir + "/tmp_category.txt"));
-        	 BufferedWriter bw = new BufferedWriter(fw);) {
+        if (!args[0].equals("eli")) {
+            try (FileWriter fw = new FileWriter(new File(rootDir + "/tmp_category.txt"));
+                 BufferedWriter bw = new BufferedWriter(fw);) {
 
-        	Iterator<String> iter = categoryMap.keySet().iterator();
-        	while (iter.hasNext()) {
-        		StringBuilder sb = new StringBuilder();
-        		String key = iter.next();
-        		sb.append(key);
-        		sb.append(":");
-        		List<String> paths = categoryMap.get(key);
-        		int cnt = 0;
-        		for (String path : paths) {
-        			sb.append(path);
-        			if (cnt != (paths.size() - 1)) {
-        				sb.append(",");
-        			}
-        		}
-        		bw.write(sb.toString() + "\n");
-        	}
+               Iterator<String> iter = categoryMap.keySet().iterator();
+               while (iter.hasNext()) {
+                   StringBuilder sb = new StringBuilder();
+                   String key = iter.next();
+                   sb.append(key);
+                   sb.append(":");
+                   List<String> paths = categoryMap.get(key);
+                   int cnt = 0;
+                   for (String path : paths) {
+                       sb.append(path);
+                       if (cnt != (paths.size() - 1)) {
+                           sb.append(",");
+                       }
+                   }
+                   bw.write(sb.toString() + "\n");
+               }
 
-        	bw.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+               bw.flush();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+        }
     }
 
     /**
@@ -793,6 +801,9 @@ public class Maki {
             this.toc(inputDirFile);
 
             eli.write("  </ul>" + CONST_CRLF);
+
+            this.category(inDirPath);
+
             eli.write("</body>" + CONST_CRLF);
             eli.write("</html>" + CONST_CRLF);
 
@@ -823,7 +834,7 @@ public class Maki {
      */
     private void toc(final File dir) throws IOException {
         if (dir.isDirectory()) {
-            this.eli.append("<li><span class=\"tocHeader\">" + dir.getName() + "</li>\n");
+            this.eli.append("<li><span class=\"tocHeader\">" + dir.getName() + "</span></li>\n");
             this.eli.append("<ul>\n");
             File[] files = dir.listFiles();
             Arrays.sort(files, new Comparator<File>() {
@@ -841,6 +852,53 @@ public class Maki {
             String ext = dir.getName().substring(idx);
             if (".maki".equals(ext)) {
                 this.createContents(dir);
+            }
+        }
+    }
+
+    /**
+     * カテゴリのリンクリストを作成する.
+     */
+    private void category(final String inputDirPath) {
+        // 中間ファイルの存在を確認して読み込む
+        File file = new File(inputDirPath + "/tmp_category.txt");
+        if (file.exists()) {
+            // ファイルが存在した場合、読み込む
+            try (FileReader fr = new FileReader(file);
+                 BufferedReader br = new BufferedReader(fr);) {
+                while (br.ready()) {
+                    String line = br.readLine();
+                    String[] tokens = line.split(":");
+                    if (tokens.length == 2) {
+                        String category = tokens[0];
+                        String[] paths = tokens[1].split(",");
+                        this.eli.write("<ul>\n");
+                        this.eli.write("  <li><span class=\"tocHeader\">#" + category + "</span></li>\n");
+                        this.eli.write("  <ul>\n");
+                        for (String path : paths) {
+                            // path のファイルを読み込んで @page_title を取得する
+                            File categoryFile = new File(path);
+                            try (FileReader categoryFr = new FileReader(categoryFile);
+                                 BufferedReader categoryBr = new BufferedReader(categoryFr);) {
+                                String pageTitle = "";
+                                while (categoryBr.ready()) {
+                                    String categoryLine = categoryBr.readLine();
+                                    if (categoryLine.indexOf("@page_title") != -1) {
+                                        pageTitle = categoryLine.split(":")[1];
+                                    }
+                                }
+                                String html = path.replace(".maki", ".html");
+                                this.eli.write("    <li><a href=\"" + html + "\">" + pageTitle + "</a></li>\n");
+                            }
+                        }
+                        this.eli.write("  </ul>\n");
+                        this.eli.write("</ul>\n");
+                    }
+                }
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -977,29 +1035,29 @@ public class Maki {
         } else if ("@".equals(token)) {
             // アノテーションの場合
 
-        	if (line.indexOf("@category:") != -1) {
-        		// 「カテゴリ」アノテーションの場合
-        		// カンマ(,)区切りでカテゴリが書かれている場合は、
-        		// それぞれ分断して全部 Map に保存しておく。
-        		String[] categories = line.substring(10).split(",");
-        		for (String category : categories) {
-        			category = category.trim();
-            		this.log("●category: " + category);
+            if (line.indexOf("@category:") != -1) {
+                // 「カテゴリ」アノテーションの場合
+                // カンマ(,)区切りでカテゴリが書かれている場合は、
+                // それぞれ分断して全部 Map に保存しておく。
+                String[] categories = line.substring(10).split(",");
+                for (String category : categories) {
+                    category = category.trim();
+                    this.log("●category: " + category);
 
-            		List<String> categoryList = null;
-            		if (categoryMap.containsKey(category)) {
-            			// すでにカテゴリが登録されている場合
-            			this.log("●すでにカテゴリが登録されている場合");
-            			categoryList = categoryMap.get(category);
-            		} else {
-            			// カテゴリが存在しない場合
-            			this.log("●カテゴリが存在しない場合");
-            			categoryList = new ArrayList<>();
-            		}
-        			categoryList.add(this.inputFilePath);
-        			categoryMap.put(category, categoryList);
-        		}
-        	}
+                    List<String> categoryList = null;
+                    if (categoryMap.containsKey(category)) {
+                        // すでにカテゴリが登録されている場合
+                        this.log("●すでにカテゴリが登録されている場合");
+                        categoryList = categoryMap.get(category);
+                    } else {
+                        // カテゴリが存在しない場合
+                        this.log("●カテゴリが存在しない場合");
+                        categoryList = new ArrayList<>();
+                    }
+                    categoryList.add(this.inputFilePath);
+                    categoryMap.put(category, categoryList);
+                }
+            }
 
         } else if ("*".equals(token)) {
 
