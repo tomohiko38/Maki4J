@@ -16,11 +16,11 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
+import java.util.TreeMap;
 
 
 /**
@@ -365,9 +365,14 @@ import java.util.StringTokenizer;
  * 機能追加
  *   ・@category のアノテーションを追加。目次にカテゴリ
  *     リストを表示するように機能追加した。
+ * -------------------------------------------------------
+ * Version 1.6.1 2020/06/06 Saturday
+ * 機能追加
+ *   ・目次を見出しで折りたためるように修正。
+ *   ・カテゴリの表示順を自然順序（TreeMap）に変更。
  *
  * @author tomohiko37_i
- * @version 1.6.0
+ * @version 1.6.1
  */
 public class Maki {
 
@@ -439,7 +444,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.6.0";
+    private static final String CONST_VERSION = "1.6.1";
 
     /**
      * タイトル(処理するファイル名).
@@ -532,7 +537,7 @@ public class Maki {
      * 各ページに書かれたカテゴリを保持するマップ。
      * クラス変数にしている点に注意。
      */
-    private static Map<String, List<String>> categoryMap = new HashMap<>();
+    private static Map<String, List<String>> categoryMap = new TreeMap<>();
 
     /**
      * 読み込むファイルのパス.
@@ -834,7 +839,8 @@ public class Maki {
      */
     private void toc(final File dir) throws IOException {
         if (dir.isDirectory()) {
-            this.eli.append("<li><span class=\"tocHeader\">" + dir.getName() + "</span></li>\n");
+            this.eli.append("<details>\n");
+            this.eli.append("    <summary><span  class=\"tocHeader\">" + dir.getName() + "</span></summary>\n");
             this.eli.append("<ul>\n");
             File[] files = dir.listFiles();
             Arrays.sort(files, new Comparator<File>() {
@@ -847,6 +853,7 @@ public class Maki {
                 this.toc(file);
             }
             this.eli.append("</ul>\n");
+            this.eli.append("</details>\n");
         } else {
             int idx = dir.getName().lastIndexOf(".");
             String ext = dir.getName().substring(idx);
@@ -873,7 +880,9 @@ public class Maki {
                         String category = tokens[0];
                         String[] paths = tokens[1].split(",");
                         this.eli.write("<ul>\n");
-                        this.eli.write("  <li><span class=\"tocHeader\">#" + category + "</span></li>\n");
+                        this.eli.write("    <details>\n");
+                        this.eli.write("        <summary><span class=\"tocHeader\">#" + category + "</span></summary>\n");
+                        //this.eli.write("  <li><span class=\"tocHeader\">#" + category + "</span></li>\n");
                         this.eli.write("  <ul>\n");
                         for (String path : paths) {
                             // path のファイルを読み込んで @page_title を取得する
@@ -892,6 +901,7 @@ public class Maki {
                             }
                         }
                         this.eli.write("  </ul>\n");
+                        this.eli.write("  </details>");
                         this.eli.write("</ul>\n");
                     }
                 }
