@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
@@ -370,9 +368,17 @@ import java.util.TreeMap;
  * 機能追加
  *   ・目次を見出しで折りたためるように修正。
  *   ・カテゴリの表示順を自然順序（TreeMap）に変更。
+ * -------------------------------------------------------
+ * Version 1.6.2 2020/06/15 Monday
+ * 機能追加
+ *   ・カテゴリ目次の出力で、key と value のセパレータを
+ *     「:」にしていたが、Windows だとドライブレターと
+ *     重複するため「;」に変更した。
+ *   ・カテゴリファイルの読み書きで UTF-8 を指定するように
+ *     改修した（日本語の文字化け対応）。
  *
  * @author tomohiko37_i
- * @version 1.6.1
+ * @version 1.6.2
  */
 public class Maki {
 
@@ -444,7 +450,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.6.1";
+    private static final String CONST_VERSION = "1.6.2";
 
     /**
      * タイトル(処理するファイル名).
@@ -561,15 +567,17 @@ public class Maki {
         // ここでカテゴリ・マップを
         // ファイルに出力しておく
         if (!args[0].equals("eli")) {
-            try (FileWriter fw = new FileWriter(new File(rootDir + "/tmp_category.txt"));
-                 BufferedWriter bw = new BufferedWriter(fw);) {
+            try (FileOutputStream fos = new FileOutputStream(new File(rootDir + "/tmp_category.txt"));
+                 OutputStreamWriter osw = new OutputStreamWriter(fos, "utf-8");
+                 BufferedWriter bw = new BufferedWriter(osw);) {
 
                Iterator<String> iter = categoryMap.keySet().iterator();
                while (iter.hasNext()) {
                    StringBuilder sb = new StringBuilder();
                    String key = iter.next();
+
                    sb.append(key);
-                   sb.append(":");
+                   sb.append(";");
                    List<String> paths = categoryMap.get(key);
                    int cnt = 0;
                    for (String path : paths) {
@@ -871,11 +879,12 @@ public class Maki {
         File file = new File(inputDirPath + "/tmp_category.txt");
         if (file.exists()) {
             // ファイルが存在した場合、読み込む
-            try (FileReader fr = new FileReader(file);
-                 BufferedReader br = new BufferedReader(fr);) {
+            try (FileInputStream fis = new FileInputStream(file);
+                 InputStreamReader isr = new InputStreamReader(fis, "utf-8");
+                 BufferedReader br = new BufferedReader(isr);) {
                 while (br.ready()) {
                     String line = br.readLine();
-                    String[] tokens = line.split(":");
+                    String[] tokens = line.split(";");
                     if (tokens.length == 2) {
                         String category = tokens[0];
                         String[] paths = tokens[1].split(",");
@@ -887,11 +896,12 @@ public class Maki {
                         for (String path : paths) {
                             // path のファイルを読み込んで @page_title を取得する
                             File categoryFile = new File(path);
-                            try (FileReader categoryFr = new FileReader(categoryFile);
-                                 BufferedReader categoryBr = new BufferedReader(categoryFr);) {
+                            try (FileInputStream cfis = new FileInputStream(categoryFile);
+                                 InputStreamReader cisr = new InputStreamReader(cfis, "utf-8");
+                                 BufferedReader cbr = new BufferedReader(cisr);) {
                                 String pageTitle = "";
-                                while (categoryBr.ready()) {
-                                    String categoryLine = categoryBr.readLine();
+                                while (cbr.ready()) {
+                                    String categoryLine = cbr.readLine();
                                     if (categoryLine.indexOf("@page_title") != -1) {
                                         pageTitle = categoryLine.split(":")[1];
                                     }
