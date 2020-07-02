@@ -796,7 +796,7 @@ public class Maki {
                       "                margin-left: -15px; border-top: 15px solid #B92A2C; border-left: 15px solid transparent; " +
                       "                border-bottom: 0; content: \"\";}" + CONST_CRLF);
             eli.write("      body {margin-right: auto; margin-left: auto; width: 800px; " +
-                      "            background-color: #fedadf; font-family: " +
+                      "            background-color: #fedadf; font-family: 'メイリオ', 'Meiryo'," +
                       "            'ヒラギノ丸ゴ Pro W4','ヒラギノ丸ゴ Pro','Hiragino Maru Gothic Pro','ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
                       "            !important; font-size: 0.8em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
             eli.write("      .toc {font-size: 1.0em;}" + CONST_CRLF);
@@ -1570,7 +1570,7 @@ public class Maki {
         this.bw.write("  <title>" + this.title + "</title>" + CONST_CRLF);
         this.bw.write("  <style type=\"text/css\">" + CONST_CRLF);
         this.bw.write("      body {margin-right: auto; margin-left: auto; width: 800px; " +
-                "background-color: #fedadf; font-family: "+
+                "background-color: #fedadf; font-family: 'メイリオ', 'Meiryo',"+
                 "'ヒラギノ丸ゴ Pro W4','ヒラギノ丸ゴ Pro','Hiragino Maru Gothic Pro', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
                 "!important; font-size: 1.0em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
         this.bw.write("      h1 {position: relative; margin: 0 0 1.5em; padding: 0.8em; " +
