@@ -376,9 +376,13 @@ import java.util.TreeMap;
  *     重複するため「;」に変更した。
  *   ・カテゴリファイルの読み書きで UTF-8 を指定するように
  *     改修した（日本語の文字化け対応）。
+ * -------------------------------------------------------
+ * Version 1.6.3 2020/08/06 Thursday
+ * 機能追加
+ *   ・quote の記載で先頭行に改行を入れるように修正。
  *
  * @author tomohiko37_i
- * @version 1.6.2
+ * @version 1.6.3
  */
 public class Maki {
 
@@ -450,7 +454,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.6.2";
+    private static final String CONST_VERSION = "1.6.3";
 
     /**
      * タイトル(処理するファイル名).
@@ -1520,7 +1524,7 @@ public class Maki {
             this.bw.write("</code></pre>" + CONST_CRLF);
         } else {
             String cite = "";
-            this.bw.write("<blockquote><p>" + CONST_CRLF);
+            this.bw.write("<blockquote><p><br>" + CONST_CRLF);
             for (int i = 0; i < this.blockList.size(); i++) {
                 String line = this.blockList.get(i);
                 if (line.indexOf("cite:") != -1) {
