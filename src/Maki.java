@@ -380,9 +380,13 @@ import java.util.TreeMap;
  * Version 1.6.3 2020/08/06 Thursday
  * 機能追加
  *   ・quote の記載で先頭行に改行を入れるように修正。
+ * -------------------------------------------------------
+ * Version 1.6.4 2020/09/03 Thursday
+ * 機能追加
+ *   ・目次にタイトル以外にページ概要も表示するように修正
  *
  * @author tomohiko37_i
- * @version 1.6.3
+ * @version 1.6.4
  */
 public class Maki {
 
@@ -454,7 +458,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.6.3";
+    private static final String CONST_VERSION = "1.6.4";
 
     /**
      * タイトル(処理するファイル名).
@@ -904,14 +908,17 @@ public class Maki {
                                  InputStreamReader cisr = new InputStreamReader(cfis, "utf-8");
                                  BufferedReader cbr = new BufferedReader(cisr);) {
                                 String pageTitle = "";
+                                String pageOutline = "";
                                 while (cbr.ready()) {
                                     String categoryLine = cbr.readLine();
                                     if (categoryLine.indexOf("@page_title") != -1) {
                                         pageTitle = categoryLine.split(":")[1];
+                                    } else if (categoryLine.indexOf("@page_outline") != -1) {
+                                        pageOutline = categoryLine.split(":")[1].trim();
                                     }
                                 }
                                 String html = path.replace(".maki", ".html");
-                                this.eli.write("    <li><a href=\"" + html + "\">" + pageTitle + "</a></li>\n");
+                                this.eli.write("    <li><a href=\"" + html + "\">" + pageTitle + "</a>&nbsp;" + pageOutline + "</li>\n");
                             }
                         }
                         this.eli.write("  </ul>\n");
@@ -935,6 +942,7 @@ public class Maki {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(
                 new FileInputStream(dir.getPath()), "utf-8"))) {
             String tmpLine = "";
+            String tmpOutline = "";
             while (br.ready()) {
                 String line = br.readLine();
                 if (line == null || line.equals("")) {
@@ -944,7 +952,11 @@ public class Maki {
                 if ("=".equals(prefix)) {
                     this.eli.write("    <li><a href=\"" + dir.getParent() + File.separator
                                                         + dir.getName().replace(".maki", ".html") + "\">"
-                                                        + tmpLine + "</a></li>" + CONST_CRLF);
+                                                        + tmpLine + "</a>&nbsp; " + tmpOutline + "</li>" + CONST_CRLF);
+                } else if ("@".equals(prefix)) {
+                    if (line.indexOf("@page_outline") != -1) {
+                        tmpOutline = line.split(":")[1].trim();
+                    }
                 } else {
                     tmpLine = line;
                 }
