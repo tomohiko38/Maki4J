@@ -384,9 +384,13 @@ import java.util.TreeMap;
  * Version 1.6.4 2020/09/03 Thursday
  * 機能追加
  *   ・目次にタイトル以外にページ概要も表示するように修正
+ * -------------------------------------------------------
+ * Version 1.7.0 2020/12/25 Friday
+ * 機能追加
+ *   ・英数字のフォントを Slack が使用している Lato に変更
  *
  * @author tomohiko37_i
- * @version 1.6.4
+ * @version 1.7.0
  */
 public class Maki {
 
@@ -404,6 +408,11 @@ public class Maki {
      * モード: 目次作成: ELI.
      */
     private static final String MODE_ELI    = "eli";
+
+    /**
+     * モード: 編集資材抽出: KOTORI.
+     */
+    private static final String MODE_KOTORI = "kotori";
 
     /**
      * 起動パラメータの順序: モード.
@@ -458,7 +467,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.6.4";
+    private static final String CONST_VERSION = "1.7.0";
 
     /**
      * タイトル(処理するファイル名).
@@ -796,6 +805,7 @@ public class Maki {
             eli.write("<head>" + CONST_CRLF);
             eli.write("  <meta charset=\"UTF-8\"/>" + CONST_CRLF);
             eli.write("  <title>Maki メニュー</title>" + CONST_CRLF);
+            eli.write("  <link rel=\"stylesheet\" type=\"text/css\" href=\"https://fonts.googleapis.com/css?family=Lato\" />");
             eli.write("  <style type=\"text/css\">" + CONST_CRLF);
             eli.write("      h1 {position: relative; margin: 0 0 1.5em; padding: 0.8em; " +
                       "          background: #B92A2C; color: #fff; font-size: 1.143em; font-weight: bold; " +
@@ -804,7 +814,7 @@ public class Maki {
                       "                margin-left: -15px; border-top: 15px solid #B92A2C; border-left: 15px solid transparent; " +
                       "                border-bottom: 0; content: \"\";}" + CONST_CRLF);
             eli.write("      body {margin-right: auto; margin-left: auto; width: 800px; " +
-                      "            background-color: #fedadf; font-family: 'メイリオ', 'Meiryo'," +
+                      "            background-color: #fedadf; font-family: Lato, 'メイリオ', 'Meiryo'," +
                       "            'ヒラギノ丸ゴ Pro W4','ヒラギノ丸ゴ Pro','Hiragino Maru Gothic Pro','ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
                       "            !important; font-size: 0.8em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
             eli.write("      .toc {font-size: 1.0em;}" + CONST_CRLF);
@@ -1584,9 +1594,10 @@ public class Maki {
         this.bw.write("<head>" + CONST_CRLF);
         this.bw.write("  <meta charset=\"UTF-8\"/>" + CONST_CRLF);
         this.bw.write("  <title>" + this.title + "</title>" + CONST_CRLF);
+        this.bw.write("<link rel=\"stylesheet\" type=\"text/css\" href=\"https://fonts.googleapis.com/css?family=Lato\" />");
         this.bw.write("  <style type=\"text/css\">" + CONST_CRLF);
         this.bw.write("      body {margin-right: auto; margin-left: auto; width: 800px; " +
-                "background-color: #fedadf; font-family: 'メイリオ', 'Meiryo',"+
+                "background-color: #fedadf; font-family: Lato, 'メイリオ', 'Meiryo',"+
                 "'ヒラギノ丸ゴ Pro W4','ヒラギノ丸ゴ Pro','Hiragino Maru Gothic Pro', 'ヒラギノ角ゴ Pro W3', 'Hiragino Kaku Gothic Pro', sans-self " +
                 "!important; font-size: 1.0em; -webkit-font-smoothing: antialiased;}" + CONST_CRLF);
         this.bw.write("      h1 {position: relative; margin: 0 0 1.5em; padding: 0.8em; " +
