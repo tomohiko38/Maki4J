@@ -388,9 +388,13 @@ import java.util.TreeMap;
  * Version 1.7.0 2020/12/25 Friday
  * 機能追加
  *   ・英数字のフォントを Slack が使用している Lato に変更
+ * -------------------------------------------------------
+ * Version 1.7.1 2021/06/29 Tuesday
+ * 機能追加
+ *   ・未使用だった定数 KOTORI を削除
  *
  * @author tomohiko37_i
- * @version 1.7.0
+ * @version 1.7.1
  */
 public class Maki {
 
@@ -408,11 +412,6 @@ public class Maki {
      * モード: 目次作成: ELI.
      */
     private static final String MODE_ELI    = "eli";
-
-    /**
-     * モード: 編集資材抽出: KOTORI.
-     */
-    private static final String MODE_KOTORI = "kotori";
 
     /**
      * 起動パラメータの順序: モード.
@@ -467,7 +466,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.7.0";
+    private static final String CONST_VERSION = "1.7.1";
 
     /**
      * タイトル(処理するファイル名).
