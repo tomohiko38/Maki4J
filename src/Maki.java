@@ -392,9 +392,13 @@ import java.util.TreeMap;
  * Version 1.7.1 2021/06/29 Tuesday
  * 機能追加
  *   ・未使用だった定数 KOTORI を削除
+ * -------------------------------------------------------
+ * Version 1.7.2 2021/07/31 Saturday
+ * 機能追加
+ *   ・行中リンクを行頭に使用すると変換されない事象を改修
  *
  * @author tomohiko37_i
- * @version 1.7.1
+ * @version 1.7.2
  */
 public class Maki {
 
@@ -466,7 +470,7 @@ public class Maki {
     /**
      * 現在の Maki のバージョン.
      */
-    private static final String CONST_VERSION = "1.7.1";
+    private static final String CONST_VERSION = "1.7.2";
 
     /**
      * タイトル(処理するファイル名).
@@ -1847,18 +1851,26 @@ public class Maki {
      * @return 変換後の1行
      */
     private String editInlineLink(final String line) {
+        log("editInlineLink --- START");
         // 記法は簡略化のためこのようなものに。
         if (line.indexOf("!") != -1) {
-            StringTokenizer link = new StringTokenizer(line, "!");
+            log(line);
+            String[] tokens = line.split("!");
+            log("tokens num:[" + tokens.length + "]");
             StringBuffer ret = new StringBuffer();
             int i = 0;
-            while (link.hasMoreTokens()) {
+            for (String token : tokens) {
                 if (i % 2 == 0) {
+                    log("本文");
                     // 本文
-                    ret.append(link.nextToken());
+                    // ! で行を分割した時に偶数番目のトークンを
+                    // 本文として扱う。
+                    ret.append(token);
                 } else {
+                    log("リンク");
                     // リンクの記述
-                    String str = link.nextToken();
+                    // 奇数番目のトークンをリンクとして扱う。
+                    String str = token;
                     StringTokenizer tmp = new StringTokenizer(str, ",");
                     if (tmp.countTokens() == 2) {
                         String linkName = tmp.nextToken();
@@ -1871,8 +1883,10 @@ public class Maki {
                 }
                 i++;
             }
+            log("editInlineLink --- END1");
             return ret.toString();
         }
+        log("editInlineLink --- END2");
         return line;
     }
 
